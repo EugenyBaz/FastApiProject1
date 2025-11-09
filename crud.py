@@ -107,3 +107,14 @@ async def delete_favorite_message(db: Session, favorite_id: int):
     db.delete(db_favorite)
     db.commit()
     return db_favorite
+
+async def get_user(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()
+
+async def update_user_profile(db: Session, user_id: int, name: str, email: str):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    db_user.name = name
+    db_user.email = email
+    db.commit()
+    db.refresh(db_user)
+    return db_user
