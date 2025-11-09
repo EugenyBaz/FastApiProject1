@@ -6,9 +6,12 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from models import User
-from config import SessionLocal
+from database import SessionLocal
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
+import os
+from dotenv import load_dotenv
+load_dotenv(override= True)
 
 router = APIRouter()
 
@@ -35,7 +38,7 @@ async def register_user(name: str, email: str, password: str, db: Session = Depe
 
 
 
-SECRET_KEY = "your-secret-key"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 

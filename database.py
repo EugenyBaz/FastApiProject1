@@ -1,19 +1,12 @@
-from databases import Database
-from sqlalchemy import create_engine, MetaData
-from sqlalchemy.ext.declarative import declarative_base
+from config import database, Base
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
-from config import DATABASE_URL
-
-# Создание движка для подключения к базе данных
-engine = create_engine("sqlite://example.db")
-metadata = MetaData()
-
-# Движок для асинхронного использования
-database = Database(DATABASE_URL)
-
-# Создание базового класса для всех моделей
-Base= declarative_base()
+engine = create_engine(f"postgresql+psycopg2://{os.getenv('USER_DB')}:{os.getenv('PASSWORD_DB')}@{os.getenv('HOST_DB')}/{os.getenv('NAME_DB')}")
+SessionLocal = sessionmaker(bind=engine)
 
 async def init_db():
     async with database:
