@@ -10,6 +10,7 @@ class User(Base):
     name = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    status = Column(String, default="offline")
 
 class Message(Base):
     __tablename__ = 'messages'
@@ -43,3 +44,39 @@ class Contact(Base):
 
     user = relationship("User", foreign_keys=[user_id])
     contact = relationship("User", foreign_keys=[contact_id])
+
+class Group(Base):
+    __tablename__ = 'groups'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+
+class GroupUser(Base):
+    __tablename__ = 'group_users'
+    id = Column(Integer, primary_key=True, index=True)
+    group_id = Column(Integer, ForeignKey('groups.id'))
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    group = relationship("Group")
+    user = relationship("User")
+
+class GroupMessage(Base):
+    __tablename__ = 'group_messages'
+    id = Column(Integer, primary_key=True, index=True)
+    group_id = Column(Integer, ForeignKey('groups.id'))
+    sender_id = Column(Integer, ForeignKey('users.id'))
+    content = Column(String, index=True)
+    timestamp = Column(DateTime)
+    read = Column(Integer, default=0)
+
+    group = relationship("Group")
+    sender = relationship("User")
+
+class Notification(Base):
+    __tablename__ = 'notifications'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    message = Column(String, index=True)
+    timestamp = Column(DateTime)
+    read = Column(Integer, default=0)
+
+    user = relationship("User")
