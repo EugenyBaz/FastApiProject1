@@ -80,3 +80,12 @@ class Notification(Base):
     read = Column(Integer, default=0)
 
     user = relationship("User")
+
+class FavoriteMessage(Base):
+    __tablename__ = 'favorite_messages'
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    message_id = Column(Integer, ForeignKey('messages.id'))
+
+    user = relationship("User")
+    message = relationship("Message")
