@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import add_favorite_message, get_favorite_messages, delete_favorite_message
-from config import SessionLocal
+from database import SessionLocal
 
 router = APIRouter()
 

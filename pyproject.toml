@@ -15,10 +15,11 @@ databases = "^0.9.0"
 python-multipart = "^0.0.20"
 email-validator = "^2.3.0"
 itsdangerous = "^2.2.0"
-passlib = "^1.7.4"
+passlib = {extras = ["argon2"], version = "^1.7.4"}
 python-jose = "^3.5.0"
 dotenv = "^0.9.9"
 psycopg2-binary = "^2.9.11"
+pydantic = "^2.12.4"
 
 
 [build-system]

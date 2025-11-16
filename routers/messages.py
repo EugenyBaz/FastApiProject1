@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_private_message, get_private_messages, mark_message_as_read
-from config import SessionLocal
+from database import SessionLocal
 
 router = APIRouter()
 

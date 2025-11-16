@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_notification, get_notifications, mark_notification_as_read
-from config import SessionLocal
+from database import SessionLocal
 
 router = APIRouter()
 

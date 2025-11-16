@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import set_user_status, get_user_status
-from config import SessionLocal
+from database import SessionLocal
 
 router = APIRouter()
 

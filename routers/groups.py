@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_group, add_user_to_group, create_group_message, get_group_messages
-from config import SessionLocal
+from database import SessionLocal
 
 router = APIRouter()
 

@@ -15,7 +15,13 @@ load_dotenv(override= True)
 
 router = APIRouter()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
 
 def get_db():
     db = SessionLocal()
@@ -27,10 +33,17 @@ def get_db():
 def get_password_hash(password):
     return pwd_context.hash(password)
 
+
 @router.post("/register/")
-async def register_user(name: str, email: str, password: str, db: Session = Depends(get_db)):
-    hashed_password = get_password_hash(password)
-    db_user = User(name=name, email=email, hashed_password=hashed_password)
+async def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
+    # Проверка существующего email
+    existing_user = db.query(User).filter(User.email == request.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+
+    hashed_password = get_password_hash(request.password)
+    db_user = User(name=request.name, email=request.email, hashed_password=hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

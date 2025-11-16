@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from database import database, create_tables, init_db
 from fastapi import FastAPI
-
+from routers.users import router as users_router
 
 
 @asynccontextmanager
@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
 
 # создаем экземпляр приложения
 app = FastAPI(lifespan=lifespan)
+app.include_router(users_router)
 
 # создаем простой эндпоинт, который возвращает приветственное сообщение
 @app.get("/")
