@@ -12,10 +12,10 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/profile/{user_id}")
+@router.get("/profile/{user_id}", tags= ["Endpoints profile"])
 async def read_profile(user_id: int, db: Session = Depends(get_db)):
     return await get_user(db, user_id)
 
-@router.put("/profile/{user_id}")
+@router.put("/profile/{user_id}", tags= ["Endpoints profile"])
 async def update_profile(user_id: int, name: str, email: str, db: Session = Depends(get_db)):
     return await update_user_profile(db, user_id, name, email)

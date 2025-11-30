@@ -12,14 +12,14 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/contact/")
+@router.post("/contact/", tags= ["Endpoints contacts"])
 async def create_contact(user_id: int, contact_id: int, db: Session = Depends(get_db)):
     return await add_contact(db, user_id, contact_id)
 
-@router.get("/contacts/")
+@router.get("/contacts/", tags= ["Endpoints contacts"])
 async def read_contacts(user_id: int, db: Session = Depends(get_db)):
     return await get_contacts(db, user_id)
 
-@router.delete("/contact/{contact_id}")
+@router.delete("/contact/{contact_id}", tags= ["Endpoints contacts"])
 async def remove_contact(contact_id: int, db: Session = Depends(get_db)):
     return await delete_contact(db, contact_id)

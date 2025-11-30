@@ -17,6 +17,7 @@ router = APIRouter()
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
+
 class RegisterRequest(BaseModel):
     name: str
     email: str
@@ -34,7 +35,7 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-@router.post("/register/")
+@router.post("/register/", tags= ["Endpoints users"])
 async def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
     # Проверка существующего email
     existing_user = db.query(User).filter(User.email == request.email).first()
@@ -83,7 +84,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-@router.post("/token", response_model=Token)
+@router.post("/token", response_model=Token, tags= ["Endpoints users"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:

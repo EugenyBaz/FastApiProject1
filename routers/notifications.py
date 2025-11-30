@@ -12,14 +12,14 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/notification/")
+@router.post("/notification/", tags= ["Endpoints notifications"])
 async def send_notification(user_id: int, message: str, db: Session = Depends(get_db)):
     return await create_notification(db, user_id, message)
 
-@router.get("/notifications/{user_id}")
+@router.get("/notifications/{user_id}", tags= ["Endpoints notifications"])
 async def read_notifications(user_id: int, db: Session = Depends(get_db)):
     return await get_notifications(db, user_id)
 
-@router.post("/notification/read/")
+@router.post("/notification/read/", tags= ["Endpoints notifications"])
 async def mark_as_read(notification_id: int, db: Session = Depends(get_db)):
     return await mark_notification_as_read(db, notification_id)

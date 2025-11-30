@@ -12,10 +12,10 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/status/")
+@router.post("/status/", tags= ["Endpoints status"])
 async def update_status(user_id: int, status: str, db: Session = Depends(get_db)):
     return await set_user_status(db, user_id, status)
 
-@router.get("/status/{user_id}")
+@router.get("/status/{user_id}", tags= ["Endpoints status"])
 async def read_status(user_id: int, db: Session = Depends(get_db)):
     return await get_user_status(db, user_id)
