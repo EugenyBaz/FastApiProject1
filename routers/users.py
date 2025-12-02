@@ -2,7 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from models import User
@@ -10,6 +10,10 @@ from database import SessionLocal
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
 import os
+
+from fastapi import Query
+from fastapi.security import OAuth2PasswordBearer
+
 from dotenv import load_dotenv
 load_dotenv(override= True)
 
@@ -20,7 +24,7 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 class RegisterRequest(BaseModel):
     name: str
-    email: str
+    email: EmailStr
     password: str
 
 
@@ -98,3 +102,38 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
         data={"sub": user.email}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=401,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if email is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    user = db.query(User).filter(User.email == email).first()
+    if user is None:
+        raise credentials_exception
+    return user
+
+@router.get("/users/", tags=["Endpoints users"])
+async def get_users(
+    skip: int = Query(0, ge=0),  # с какого элемента начинать
+    limit: int = Query(10, ge=1, le=100),  # сколько элементов вернуть
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Можно добавить проверку роли, например:
+    # if current_user.role != "admin":
+    #     raise HTTPException(status_code=403, detail="Not authorized")
+
+    users = db.query(User).offset(skip).limit(limit).all()
+    return [{"id": u.id, "name": u.name, "email": u.email} for u in users]

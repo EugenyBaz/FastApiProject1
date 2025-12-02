@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+
 from database import database, create_tables, init_db
 from fastapi import FastAPI
 
@@ -10,6 +11,7 @@ from routers.messages import router as messages_router
 from routers.groups import router as groups_router
 from routers.favorites import router as favorites_router
 from routers.contacts import router as contacts_router
+
 
 
 @asynccontextmanager
@@ -50,3 +52,4 @@ def read_root():
 @app.get("/hello/{name}", tags= ["Endpoints main"])
 def read_hello(name: str):
     return {"message": f"Hello, {name}!"}
+
