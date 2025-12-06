@@ -16,6 +16,7 @@ from routers.contacts import router as contacts_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """ Создание базы данных, подключение"""
 
     create_tables()
     await init_db()
@@ -45,11 +46,13 @@ app.include_router(contacts_router)
 # создаем простой эндпоинт, который возвращает приветственное сообщение
 @app.get("/", tags= ["Endpoints main"])
 def read_root():
+    """Приветственное сообщение"""
     return {"message": "Hello, World!"}
 
 
 
 @app.get("/hello/{name}", tags= ["Endpoints main"])
 def read_hello(name: str):
+    """ Приветственное сообщение при вводе имени"""
     return {"message": f"Hello, {name}!"}
 

@@ -62,6 +62,7 @@ async def get_group_messages(db: Session, group_id: int):
     return db.query(GroupMessage).filter(GroupMessage.group_id == group_id).all()
 
 async def set_user_status(db: Session, user_id: int, status: str):
+    """ Назначение и обновление статусов пользователя"""
     db_user = db.query(User).filter(User.id == user_id).first()
     db_user.status = status
     db.commit()
@@ -69,10 +70,12 @@ async def set_user_status(db: Session, user_id: int, status: str):
     return db_user
 
 async def get_user_status(db: Session, user_id: int):
+    """ Вывод статуса пользователя"""
     db_user = db.query(User).filter(User.id == user_id).first()
     return db_user.status
 
 async def create_notification(db: Session, user_id: int, message: str):
+    """ Создание заметок"""
     db_notification = Notification(user_id=user_id, message=message)
     db.add(db_notification)
     db.commit()
@@ -80,9 +83,11 @@ async def create_notification(db: Session, user_id: int, message: str):
     return db_notification
 
 async def get_notifications(db: Session, user_id: int):
+    """ Получение списка заметок пользователя"""
     return db.query(Notification).filter(Notification.user_id == user_id).all()
 
 async def mark_notification_as_read(db: Session, notification_id: int):
+    """ Пометка прочтения заметок"""
     db_notification = db.query(Notification).filter(Notification.id == notification_id).first()
     db_notification.read = 1
     db.commit()
@@ -90,6 +95,7 @@ async def mark_notification_as_read(db: Session, notification_id: int):
     return db_notification
 
 async def add_favorite_message(db: Session, user_id: int, message_id: int):
+    """ Добавление сообщения в избранное"""
     db_favorite = FavoriteMessage(user_id=user_id, message_id=message_id)
     db.add(db_favorite)
     db.commit()

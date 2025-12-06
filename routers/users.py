@@ -8,7 +8,7 @@ from passlib.context import CryptContext
 from models import User
 from database import SessionLocal
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import os
 
 from fastapi import Query
@@ -41,6 +41,7 @@ def get_password_hash(password):
 
 @router.post("/register/", tags= ["Endpoints users"])
 async def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
+    """ Ручка регистрации пользователя"""
     # Проверка существующего email
     existing_user = db.query(User).filter(User.email == request.email).first()
     if existing_user:
@@ -68,9 +69,11 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 def verify_password(plain_password, hashed_password):
+    """Верификация пароля"""
     return pwd_context.verify(plain_password, hashed_password)
 
 def authenticate_user(db: Session, email: str, password: str):
+    """ Аутентификация юзера"""
     user = db.query(User).filter(User.email == email).first()
     if not user:
         return False
@@ -81,15 +84,16 @@ def authenticate_user(db: Session, email: str, password: str):
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
 @router.post("/token", response_model=Token, tags= ["Endpoints users"])
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """ Ручка логина пользователя"""
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -107,6 +111,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    """ Возвращаем данные пользователя"""
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -131,6 +136,7 @@ async def get_users(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    """ Ручка просмотра пользователей"""
     # Можно добавить проверку роли, например:
     # if current_user.role != "admin":
     #     raise HTTPException(status_code=403, detail="Not authorized")
