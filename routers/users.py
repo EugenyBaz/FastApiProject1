@@ -23,12 +23,14 @@ pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 
 class RegisterRequest(BaseModel):
+    """Модель запроса для регистрации нового пользователя."""
     name: str
     email: EmailStr
     password: str
 
 
 def get_db():
+    """Создаёт сессию подключения к базе данных и корректно закрывает её после использования."""
     db = SessionLocal()
     try:
         yield db
@@ -36,6 +38,7 @@ def get_db():
         db.close()
 
 def get_password_hash(password):
+    """Возвращает хешированную версию переданного пароля."""
     return pwd_context.hash(password)
 
 
@@ -111,7 +114,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    """ Возвращаем данные пользователя"""
+    """ Возвращение данных пользователя"""
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
