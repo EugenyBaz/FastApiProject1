@@ -1,16 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_notification, get_notifications, mark_notification_as_read
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/notification/", tags= ["Endpoints notifications"])
 async def send_notification(user_id: int, message: str, db: Session = Depends(get_db)):

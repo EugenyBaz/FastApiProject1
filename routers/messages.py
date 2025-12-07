@@ -1,16 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_private_message, get_private_messages, mark_message_as_read
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter()
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/private_message/", tags= ["Endpoints messages"])
 async def send_private_message(sender_id: int, receiver_id: int, content: str, db: Session = Depends(get_db)):

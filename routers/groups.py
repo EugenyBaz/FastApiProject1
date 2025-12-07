@@ -1,17 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import create_group, add_user_to_group, create_group_message, get_group_messages
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter()
-
-def get_db():
-    """ Подключение к базе данных """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/group/", tags= ["Endpoints groups"])
 async def create_new_group(name: str, db: Session = Depends(get_db)):

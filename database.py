@@ -19,3 +19,12 @@ async def init_db():
 def create_tables():
     """Создание таблиц"""
     Base.metadata.create_all(bind=engine)
+
+
+def get_db():
+    """Создаёт сессию подключения к базе данных и корректно закрывает её после использования."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

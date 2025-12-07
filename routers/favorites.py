@@ -1,17 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from crud import add_favorite_message, get_favorite_messages, delete_favorite_message
-from database import SessionLocal
+from database import get_db
 
 router = APIRouter()
-
-def get_db():
-    """ Подключение к базе данных """
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 @router.post("/favorite/", tags= ["Endpoints favorites"])
 async def create_favorite(user_id: int, message_id: int, db: Session = Depends(get_db)):

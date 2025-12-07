@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from models import User
-from database import SessionLocal
+from database import get_db
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 import os
@@ -28,14 +28,6 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str
 
-
-def get_db():
-    """Создаёт сессию подключения к базе данных и корректно закрывает её после использования."""
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 def get_password_hash(password):
     """Возвращает хешированную версию переданного пароля."""
